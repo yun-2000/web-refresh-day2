@@ -139,12 +139,14 @@
       .add-task-btn:hover {
         background-color: var(--tertiary-color);
       }
+      .complete {
+        display: hidden;
+      }
     </style>
     <script>
       const form = document.querySelector(".todo-content");
       const tasksList = document.querySelector(".todo-list");
       const addItem = document.querySelector(".add-task-btn");
-
       const taskArr = JSON.parse(localStorage.getItem("tasks")) || [];
 
       function addTasks(e) {
@@ -161,12 +163,16 @@
         this.reset();
         this.querySelector(".add-task-input").focus();
       }
+
       function populateList(todoArr = [], todoList) {
+        // console.log(todoArr);
         todoList.innerHTML = todoArr
           .map((task, i) => {
             return `
           <li class="todo-item">
-            <input type="checkbox" id="task-${i}" class="todo-itme-box" />
+            <input type="checkbox"  data-index="${i}" id="task-${i}" class="todo-itme-box ${
+              task.done ? "complete" : ""
+            }" ${task.done ? "checked" : ""}/>
             <label for="task-${i}">${task.inputValue}</label>
           </li>
       `;
@@ -174,11 +180,19 @@
           .join("");
       }
 
+      function toggleDone(e) {
+        if (!e.target.matches("input")) return;
+        const el = e.target;
+        const el_index = el.dataset.index;
+        taskArr[el_index].done = !taskArr[el_index].done;
+        localStorage.setItem("tasks", JSON.stringify(taskArr));
+      }
       form.addEventListener("submit", addTasks);
       if (taskArr.length !== 0) {
-        console.log(taskArr);
         populateList(taskArr, tasksList);
       }
+
+      tasksList.addEventListener("click", toggleDone);
     </script>
   </body>
 </html>
