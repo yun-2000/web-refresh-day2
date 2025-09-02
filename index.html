@@ -5,5 +5,180 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Todo List</title>
   </head>
-  <body></body>
+  <body>
+    <main class="content">
+      <header><h1 class="main-header">My Day</h1></header>
+      <form class="todo-content">
+        <ul class="todo-list">
+          <img src="img/note.svg" alt="A note image" class="note-img" />
+        </ul>
+        <div class="add-task">
+          <input type="text" class="add-task-input" name="add-new-task" />
+          <button type="submit" class="add-task-btn">﹢</button>
+        </div>
+      </form>
+    </main>
+    <style>
+      :root {
+        --primary-color: white;
+        --secondary-color: #1e1e1e;
+        --tertiary-color: #e6e5e5;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .content {
+        width: 400px;
+        height: 500px;
+
+        border: 3px solid var(--secondary-color);
+        border-radius: 10px;
+
+        display: flex;
+        flex-direction: column;
+      }
+      .main-header {
+        margin-bottom: 30px;
+        padding-left: 30px;
+        padding-top: 30px;
+        display: flex;
+      }
+      .todo-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        flex: 1;
+        min-height: 0;
+      }
+      .note-img {
+        height: 200px;
+        width: 200px;
+        display: flex;
+        align-items: center;
+        justify-self: center;
+      }
+      .todo-list {
+        list-style: none;
+        padding: 0 30px;
+
+        overflow-y: auto;
+        flex: 1;
+      }
+      .todo-item {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 20px;
+        border: 1px solid var(--tertiary-color);
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+
+      .todo-item label {
+        flex: 1;
+        word-break: break-word;
+      }
+      .todo-item input[type="checkbox"] {
+        appearance: none;
+
+        height: 20px;
+        width: 20px;
+
+        border: 1px solid var(--tertiary-color);
+        border-radius: 50%;
+
+        background-color: var(--primary-color);
+        cursor: pointer;
+      }
+      .todo-item input[type="checkbox"]:checked {
+        background-color: var(--secondary-color);
+      }
+      .add-task {
+        background-color: var(--secondary-color);
+        padding: 15px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .add-task-input {
+        width: 90%;
+        height: 30px;
+      }
+      .add-task-input:focus {
+        outline: none;
+      }
+      .add-task-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 20px;
+
+        background-color: var(--primary-color);
+        color: var(--secondary-color);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: none;
+        border-radius: 50%;
+
+        cursor: pointer;
+      }
+
+      .add-task-btn:hover {
+        background-color: var(--tertiary-color);
+      }
+    </style>
+    <script>
+      const form = document.querySelector(".todo-content");
+      const tasksList = document.querySelector(".todo-list");
+      const addItem = document.querySelector(".add-task-btn");
+
+      const taskArr = JSON.parse(localStorage.getItem("tasks")) || [];
+
+      function addTasks(e) {
+        e.preventDefault();
+        const inputValue = this.querySelector(".add-task-input").value;
+        if (!inputValue.trim()) return;
+        const newTask = {
+          inputValue,
+          done: false
+        };
+        taskArr.push(newTask);
+        localStorage.setItem("tasks", JSON.stringify(taskArr));
+        populateList(taskArr, tasksList);
+        this.reset();
+        this.querySelector(".add-task-input").focus();
+      }
+      function populateList(todoArr = [], todoList) {
+        todoList.innerHTML = todoArr
+          .map((task, i) => {
+            return `
+          <li class="todo-item">
+            <input type="checkbox" id="task-${i}" class="todo-itme-box" />
+            <label for="task-${i}">${task.inputValue}</label>
+          </li>
+      `;
+          })
+          .join("");
+      }
+
+      form.addEventListener("submit", addTasks);
+      if (taskArr.length !== 0) {
+        console.log(taskArr);
+        populateList(taskArr, tasksList);
+      }
+    </script>
+  </body>
 </html>
